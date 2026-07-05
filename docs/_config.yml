@@ -1,0 +1,6 @@
+# GitHub Pages (Settings → Pages → branch main, cartella /docs).
+# La privacy policy diventa:
+#   https://prometeo91.github.io/caelum-backend/privacy-policy
+title: Caelum
+theme: jekyll-theme-primer
+lang: it

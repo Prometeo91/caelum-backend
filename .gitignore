@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# File effemeridi: scaricarli con python backend/scripts/download_ephe.py
+backend/ephe/
