@@ -14,8 +14,10 @@ I contenuti vivono in `contenuti/<lingua>/<slug>.md` e sono scritti a mano
 
     **Teaser** (card): Sottotitolo/anteprima per le card
 
-Se un file manca il servizio non fallisce: restituisce un segnaposto con
-`missing = True` e l'app mostra comunque i dati calcolati.
+Se un contenuto manca nella lingua richiesta si ripiega su
+`config.DEFAULT_LANG`; se manca anche lì il servizio non fallisce:
+restituisce un segnaposto con `missing = True` e l'app mostra comunque
+i dati calcolati.
 """
 
 from __future__ import annotations
@@ -26,8 +28,12 @@ from dataclasses import dataclass, field
 from app import config
 
 _CARD_FIELD = re.compile(
-    r"^\*\*(?P<key>Titolo breve|Teaser)\*\*\s*\(card\)\s*:\s*(?P<value>.+)$"
+    r"^\*\*(?P<key>Titolo breve|Short title|Teaser)\*\*\s*\(card\)\s*:\s*(?P<value>.+)$"
 )
+
+# Il marcatore del titolo card si scrive nella lingua del file: senza
+# questa equivalenza un file inglese perderebbe il titolo in silenzio.
+_CARD_TITLE_KEYS = {"Titolo breve", "Short title"}
 
 
 @dataclass
@@ -65,7 +71,7 @@ def parse_markdown(slug: str, lang: str, text: str) -> Content:
         stripped = line.strip()
         match = _CARD_FIELD.match(stripped)
         if match:
-            if match.group("key") == "Titolo breve":
+            if match.group("key") in _CARD_TITLE_KEYS:
                 card_title = match.group("value").strip()
             else:
                 teaser = match.group("value").strip()
@@ -88,6 +94,11 @@ def parse_markdown(slug: str, lang: str, text: str) -> Content:
 
 def load_content(slug: str, lang: str = config.DEFAULT_LANG) -> Content:
     path = content_path(slug, lang)
+    if not path.is_file() and lang != config.DEFAULT_LANG:
+        # Finché una lingua non è tradotta serviamo la lingua di
+        # riferimento: meglio un testo in italiano che nessun testo.
+        lang = config.DEFAULT_LANG
+        path = content_path(slug, lang)
     if not path.is_file():
         return Content(slug=slug, lang=lang, missing=True)
     return parse_markdown(slug, lang, path.read_text(encoding="utf-8"))

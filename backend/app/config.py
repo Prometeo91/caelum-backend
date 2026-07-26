@@ -49,11 +49,11 @@ HOUSE_SYSTEM = b"P"
 
 # Aspetti maggiori: angolo e orbo (in gradi), entrambi configurabili.
 ASPECTS: dict[str, dict[str, float]] = {
-    "congiunzione": {"angle": 0.0, "orb": 8.0},
-    "sestile": {"angle": 60.0, "orb": 5.0},
-    "quadratura": {"angle": 90.0, "orb": 7.0},
-    "trigono": {"angle": 120.0, "orb": 7.0},
-    "opposizione": {"angle": 180.0, "orb": 8.0},
+    "congiunzione": {"angle": 0.0, "orb": 10.0},
+    "sestile": {"angle": 60.0, "orb": 4.0},
+    "quadratura": {"angle": 90.0, "orb": 6.0},
+    "trigono": {"angle": 120.0, "orb": 8.0},
+    "opposizione": {"angle": 180.0, "orb": 10.0},
 }
 
 # Punti inclusi nel calcolo degli aspetti oltre ai corpi (id speciali).

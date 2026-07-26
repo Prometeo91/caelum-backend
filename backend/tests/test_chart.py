@@ -89,7 +89,7 @@ def test_einstein_has_major_aspects(einstein):
     valid_types = {"congiunzione", "sestile", "quadratura", "trigono", "opposizione"}
     for aspect in einstein.aspects:
         assert aspect.type in valid_types
-        assert aspect.orb <= 8.0
+        assert aspect.orb <= 10.0
 
 
 def test_house_of_wraparound():
