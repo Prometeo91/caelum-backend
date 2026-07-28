@@ -9,6 +9,7 @@ Avvio locale:
 from __future__ import annotations
 
 import logging
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -55,13 +56,23 @@ app = FastAPI(
     ),
 )
 
-# L'app mobile non ha bisogno di CORS; questa apertura serve solo per
-# sviluppo/web preview. Da restringere quando ci sarà un dominio.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS chiuso: l'app mobile parla in HTTP nativo e il CORS non la
+# riguarda: è una regola dei browser. Con `["*"]` qualunque sito poteva
+# usare questo backend come motore di calcolo gratuito dalle pagine dei
+# propri visitatori, a spese della nostra quota su Render.
+#
+# Non è una difesa contro l'abuso in generale (uno script o un curl
+# passano comunque), ma toglie la via più comoda.
+#
+# CAELUM_CORS_ORIGINS, separate da virgola, riapre a origini specifiche:
+# serve per lo sviluppo web locale o se un domani ci sarà un sito.
+_origins = [o.strip() for o in os.getenv("CAELUM_CORS_ORIGINS", "").split(",") if o.strip()]
+if _origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_origins,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 app.include_router(router)

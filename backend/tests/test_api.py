@@ -157,3 +157,12 @@ def test_geocode_unavailable_maps_to_503(monkeypatch):
     monkeypatch.setattr(geocode, "search_places", failing_search)
     response = client.get("/api/geocode", params={"q": "Ulm"})
     assert response.status_code == 503
+
+
+def test_nessun_header_cors_per_impostazione_predefinita():
+    """Senza CAELUM_CORS_ORIGINS il backend non si lascia chiamare dalle
+    pagine web altrui: con `allow_origins=["*"]` chiunque poteva usarlo
+    come motore di calcolo gratuito a spese della nostra quota."""
+    response = client.get("/health", headers={"Origin": "https://terzo.example"})
+    assert response.status_code == 200
+    assert "access-control-allow-origin" not in response.headers
