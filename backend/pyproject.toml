@@ -22,7 +22,7 @@ dependencies = [
     "pyswisseph==2.10.3.2",
     "httpx==0.28.1",
     "pydantic==2.13.4",
-    "tzdata==2026.2",
+    "tzdata==2026.3",
 ]
 
 [project.optional-dependencies]
