@@ -1,6 +1,6 @@
 # Privacy Policy — Caelum
 
-*Ultimo aggiornamento: 5 luglio 2026*
+*Ultimo aggiornamento: 27 luglio 2026*
 
 Caelum è un'app di astrologia (tema natale e servizi interpretativi) a
 scopo di intrattenimento e crescita personale. Questa informativa
@@ -17,17 +17,27 @@ Contatto: app.caelum@gmail.com
 nell'app. Servono esclusivamente a calcolare il tema natale e i
 servizi interpretativi.
 
-- Sono salvati **solo sul tuo dispositivo**.
+- Sono salvati **solo sul tuo dispositivo**. Il backup automatico di
+  Android è disattivato per questa app, quindi i dati di nascita non
+  vengono copiati né sul cloud né su un nuovo telefono.
 - Non è richiesto alcun account e non c'è alcuna registrazione.
 - Vengono inviati al server di calcolo **soltanto** al momento della
   richiesta di un servizio (calcolo del tema, elementi, emisferi). Il
   server li elabora in memoria per produrre la risposta e **non li
-  salva** in alcun archivio.
+  salva** in alcun archivio, né li scrive nei propri registri tecnici.
 
 **Ricerca del luogo di nascita** — quando cerchi una città, il nome
 digitato viene inviato al servizio di geocoding
 [Open-Meteo](https://open-meteo.com/) per ottenere le coordinate.
-A Open-Meteo non viene trasmesso nessun altro dato.
+A Open-Meteo non viene trasmesso nessun altro dato. Se quel servizio
+non risponde, la stessa ricerca passa dal nostro server, che non la
+conserva.
+
+**Registri tecnici del server** — come ogni server, quello di calcolo
+annota le richieste ricevute (data e ora, indirizzo IP, tipo di
+richiesta) per un periodo limitato e a soli fini di funzionamento e
+sicurezza. Questi registri **non contengono i dati di nascita né i
+luoghi cercati**.
 
 ## Cosa l'app NON fa
 
@@ -40,8 +50,9 @@ A Open-Meteo non viene trasmesso nessun altro dato.
 ## Conservazione e cancellazione
 
 I dati di nascita restano sul dispositivo finché non li modifichi o
-disinstalli l'app. Disinstallare l'app li elimina definitivamente.
-Sul server non è conservato nulla da cancellare.
+disinstalli l'app. Poiché non esiste alcuna copia di backup,
+disinstallare l'app li elimina definitivamente. Sul server non è
+conservato alcun dato di nascita da cancellare.
 
 ## I tuoi diritti
 
