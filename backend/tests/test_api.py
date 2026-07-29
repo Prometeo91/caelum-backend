@@ -126,7 +126,37 @@ def test_natal_chart_service_returns_chart_data():
     body = response.json()
     assert body["service"]["id"] == "tema-natale"
     assert len(body["data"]["bodies"]) == 10
-    assert body["contents"] == []
+    # Le pagine di lettura hanno uno slug per pianeta nel segno e nella
+    # casa, per gli angoli e per ogni aspetto; finché i testi non sono
+    # scritti il loader risponde con segnaposto (missing = True).
+    slugs = [c["slug"] for c in body["contents"]]
+    assert "tema-natale/sole-in-pesci" in slugs
+    assert "tema-natale/sole-in-casa-10" in slugs
+    assert "tema-natale/ascendente-in-cancro" in slugs
+    assert any(s.startswith("tema-natale/medio-cielo-in-") for s in slugs)
+    assert len(slugs) == len(set(slugs)), "slug duplicati"
+    aspect_count = len(body["data"]["aspects"])
+    # 10 segni + 10 case + 2 angoli + aspetti.
+    assert len(slugs) == 22 + aspect_count
+
+
+@requires_ephemeris
+def test_chart_house_system_parameter():
+    payload = {**EINSTEIN_PAYLOAD, "house_system": "W"}
+    response = client.post("/api/chart", json=payload)
+    assert response.status_code == 200
+    body = response.json()
+    # Segni interi: cuspidi sugli inizi esatti dei segni.
+    assert all(c % 30 == 0 for c in body["house_cusps"])
+    # I pianeti nei segni non cambiano.
+    sun = next(p for p in body["bodies"] if p["id"] == "sole")
+    assert sun["sign"] == "pesci"
+
+
+def test_chart_unknown_house_system_422():
+    payload = {**EINSTEIN_PAYLOAD, "house_system": "Z"}
+    response = client.post("/api/chart", json=payload)
+    assert response.status_code == 422
 
 
 def test_geocode_endpoint(monkeypatch):

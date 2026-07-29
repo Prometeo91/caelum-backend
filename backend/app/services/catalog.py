@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from app.astro.chart import Chart
-from app.services import elements, hemispheres
+from app.services import elements, hemispheres, natal_chart
 
 
 @dataclass(frozen=True)
@@ -48,6 +48,8 @@ CATALOG: list[ServiceDef] = [
         free=True,
         name_key="serviceNatalChart",
         compute=_chart_passthrough,
+        content_slugs=natal_chart.content_slugs,
+        required_contents=natal_chart.REQUIRED_CONTENTS,
     ),
     ServiceDef(
         id="elementi",

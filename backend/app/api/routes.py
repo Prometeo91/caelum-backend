@@ -77,7 +77,10 @@ def _compute_chart(birth: schemas.BirthDataIn) -> chart_mod.Chart:
         raise HTTPException(status_code=422, detail="Fuso orario non valido.")
     try:
         return chart_mod.compute_chart(
-            utc, birth.place.latitude, birth.place.longitude
+            utc,
+            birth.place.latitude,
+            birth.place.longitude,
+            house_system=birth.house_system,
         )
     except EphemerisNotInstalled as exc:
         raise HTTPException(status_code=503, detail=str(exc))

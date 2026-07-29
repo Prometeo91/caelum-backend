@@ -44,8 +44,24 @@ BODIES: list[tuple[str, int]] = [
     ("plutone", swe.PLUTO),
 ]
 
-# Sistema di case: Placidus.
+# Sistema di case predefinito: Placidus.
 HOUSE_SYSTEM = b"P"
+
+# Sistemi di domificazione selezionabili dall'app (codici Swiss Ephemeris).
+# L'elenco rispecchia il foglio di domificazione del redesign «Specola»;
+# le etichette visibili sono tradotte nell'app, qui servono solo ai log
+# e alla validazione.
+HOUSE_SYSTEMS: dict[str, str] = {
+    "P": "Placido",
+    "W": "Segni interi",
+    "E": "Case uguali",
+    "K": "Koch",
+    "R": "Regiomontano",
+    "C": "Campano",
+    "O": "Porfirio",
+    "T": "Topocentrico (Polich-Page)",
+    "I": "Pullen SR",
+}
 
 # Aspetti maggiori: angolo e orbo (in gradi), entrambi configurabili.
 ASPECTS: dict[str, dict[str, float]] = {

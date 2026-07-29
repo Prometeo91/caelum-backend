@@ -144,6 +144,8 @@ def _find_aspects(points: list[Point]) -> list[Aspect]:
                         )
                     )
                     break  # un solo aspetto per coppia
+    # Dal più stretto al più largo: l'ordine che l'app mostra così com'è.
+    aspects.sort(key=lambda a: a.orb)
     return aspects
 
 
@@ -152,9 +154,21 @@ def compute_chart(
     latitude: float,
     longitude: float,
     bodies: list[tuple[str, int]] | None = None,
+    house_system: str | None = None,
 ) -> Chart:
-    """Calcola il tema natale completo per l'istante UTC e il luogo dati."""
+    """Calcola il tema natale completo per l'istante UTC e il luogo dati.
+
+    `house_system` è un codice di config.HOUSE_SYSTEMS (predefinito
+    Placidus): cambia cuspidi e posizioni nelle case, non i pianeti
+    nei segni.
+    """
     bodies = bodies if bodies is not None else config.BODIES
+    if house_system is None:
+        hsys = config.HOUSE_SYSTEM
+    elif house_system in config.HOUSE_SYSTEMS:
+        hsys = house_system.encode("ascii")
+    else:
+        raise ValueError(f"Sistema di domificazione sconosciuto: {house_system}")
     jd_ut = _julian_day_ut(utc)
 
     chart = Chart(
@@ -171,7 +185,7 @@ def compute_chart(
             lon, _lat, _dist, lon_speed = values[0], values[1], values[2], values[3]
             chart.bodies.append(_make_point(body_id, lon, speed=lon_speed))
 
-        cusps, ascmc = swe.houses(jd_ut, latitude, longitude, config.HOUSE_SYSTEM)
+        cusps, ascmc = swe.houses(jd_ut, latitude, longitude, hsys)
 
     chart.house_cusps = [c % 360.0 for c in cusps[:12]]
     chart.ascendant = _make_point("ascendente", ascmc[0])

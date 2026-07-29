@@ -92,6 +92,37 @@ def test_einstein_has_major_aspects(einstein):
         assert aspect.orb <= 10.0
 
 
+@requires_ephemeris
+def test_aspects_sorted_by_orb(einstein):
+    """L'app mostra gli aspetti nell'ordine ricevuto: dal più stretto."""
+    orbs = [a.orb for a in einstein.aspects]
+    assert orbs == sorted(orbs)
+
+
+@requires_ephemeris
+def test_house_system_changes_cusps_not_signs(einstein):
+    """Cambiare domificazione ricalcola cuspidi e case, non i pianeti
+    nei segni (è la promessa fatta nel foglio di domificazione)."""
+    whole = chart_mod.compute_chart(EINSTEIN_UTC, **ULM, house_system="W")
+    # Segni interi: ogni cuspide è l'inizio esatto di un segno.
+    for cusp in whole.house_cusps:
+        assert cusp % 30 == pytest.approx(0.0, abs=1e-6)
+    for placidus_point, whole_point in zip(einstein.bodies, whole.bodies):
+        assert placidus_point.sign == whole_point.sign
+        assert placidus_point.longitude == pytest.approx(
+            whole_point.longitude, abs=1e-9
+        )
+    # Con case diverse almeno un corpo cambia casa nel tema di Einstein.
+    assert any(
+        p.house != w.house for p, w in zip(einstein.bodies, whole.bodies)
+    )
+
+
+def test_unknown_house_system_rejected():
+    with pytest.raises(ValueError):
+        chart_mod.compute_chart(EINSTEIN_UTC, **ULM, house_system="X")
+
+
 def test_house_of_wraparound():
     cusps = [350.0] + [350.0 + i * 30 for i in range(1, 12)]
     cusps = [c % 360 for c in cusps]

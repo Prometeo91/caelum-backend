@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from datetime import date, time
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+from app import config
 
 
 class PlaceIn(BaseModel):
@@ -23,6 +25,19 @@ class BirthDataIn(BaseModel):
     time: time
     place: PlaceIn
     utc_offset_minutes: int | None = Field(default=None, ge=-16 * 60, le=16 * 60)
+    # Codice Swiss Ephemeris del sistema di domificazione (vedi
+    # config.HOUSE_SYSTEMS): preferenza globale dell'app, non per-calcolo.
+    house_system: str = "P"
+
+    @field_validator("house_system")
+    @classmethod
+    def _known_house_system(cls, value: str) -> str:
+        if value not in config.HOUSE_SYSTEMS:
+            allowed = ", ".join(sorted(config.HOUSE_SYSTEMS))
+            raise ValueError(
+                f"Sistema di domificazione sconosciuto (ammessi: {allowed})."
+            )
+        return value
 
     @model_validator(mode="after")
     def _require_time_reference(self):
