@@ -5,12 +5,12 @@ del servizio); qui c'è solo la mappa dei contenuti da allegare per le
 pagine di lettura del redesign «Specola»: pianeti nei segni, pianeti
 nelle case, Ascendente e Medio Cielo nei segni, aspetti.
 
-I file Markdown corrispondenti sono ancora da scrivere: finché mancano
-il loader li segna `missing = True` e l'app mostra il segnaposto «testo
-in preparazione». Restano fuori da REQUIRED_CONTENTS di proposito: la
-checklist (e quindi la CI) segnala i buchi dei testi già promessi, non
-un piano editoriale intero. Quando i testi verranno scritti, andranno
-aggiunti qui a lotti (es. prima i pianeti nei segni).
+I file Markdown si scrivono a lotti: il primo (Sole, Luna e Ascendente
+nei dodici segni — i «tre pilastri» del redesign) è in REQUIRED_CONTENTS
+e quindi sorvegliato dalla checklist e dalla CI. Per gli slug non ancora
+coperti il loader risponde `missing = True` e l'app mostra il segnaposto
+«testo in preparazione»; i lotti successivi (altri pianeti nei segni,
+case, aspetti) vanno aggiunti qui man mano che i testi esistono.
 
 Schema degli slug (nomi file in italiano, come da contenuti/README.md):
 
@@ -22,6 +22,8 @@ Schema degli slug (nomi file in italiano, come da contenuti/README.md):
 """
 
 from __future__ import annotations
+
+from app import config
 
 
 def _slug_id(point_id: str) -> str:
@@ -53,6 +55,9 @@ def content_slugs(data: dict) -> list[str]:
     return slugs
 
 
-# I testi del tema natale non sono ancora stati scritti (vedi sopra):
-# checklist vuota finché il piano editoriale non parte.
-REQUIRED_CONTENTS: list[str] = []
+# Primo lotto editoriale: i tre pilastri nei dodici segni (36 file).
+REQUIRED_CONTENTS: list[str] = [
+    f"tema-natale/{point}-in-{sign}"
+    for point in ("sole", "luna", "ascendente")
+    for sign in config.SIGNS
+]
