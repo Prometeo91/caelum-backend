@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from app import config
 from app.content import loader
-from app.services import elements, hemispheres
+from app.services import elements, hemispheres, natal_chart
 from tests.conftest import requires_contents
 
 SAMPLE = """# Titolo di prova
@@ -70,7 +70,11 @@ def test_translated_contents_are_well_formed():
     """I file presenti in una lingua diversa da quella di riferimento
     devono essere completi come gli originali: la riserva nasconderebbe
     altrimenti una traduzione a metà."""
-    required = [*elements.REQUIRED_CONTENTS, *hemispheres.REQUIRED_CONTENTS]
+    required = [
+        *elements.REQUIRED_CONTENTS,
+        *hemispheres.REQUIRED_CONTENTS,
+        *natal_chart.REQUIRED_CONTENTS,
+    ]
     for lang_dir in sorted(config.CONTENT_DIR.iterdir()):
         if not lang_dir.is_dir() or lang_dir.name == config.DEFAULT_LANG:
             continue
