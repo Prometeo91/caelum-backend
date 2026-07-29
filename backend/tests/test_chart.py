@@ -100,6 +100,16 @@ def test_aspects_sorted_by_orb(einstein):
 
 
 @requires_ephemeris
+def test_aspects_only_between_planets(einstein):
+    """Niente aspetti con le cuspidi delle case (Ascendente e Medio
+    Cielo compresi): si calcolano solo fra i corpi."""
+    cusps = {"ascendente", "medio_cielo"}
+    for aspect in einstein.aspects:
+        assert aspect.point_a not in cusps
+        assert aspect.point_b not in cusps
+
+
+@requires_ephemeris
 def test_house_system_changes_cusps_not_signs(einstein):
     """Cambiare domificazione ricalcola cuspidi e case, non i pianeti
     nei segni (è la promessa fatta nel foglio di domificazione)."""

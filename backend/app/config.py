@@ -73,7 +73,9 @@ ASPECTS: dict[str, dict[str, float]] = {
 }
 
 # Punti inclusi nel calcolo degli aspetti oltre ai corpi (id speciali).
-ASPECT_EXTRA_POINTS: list[str] = ["ascendente", "medio_cielo"]
+# Vuoto per scelta editoriale: gli aspetti si calcolano solo fra pianeti,
+# non con le cuspidi delle case (Ascendente e Medio Cielo compresi).
+ASPECT_EXTRA_POINTS: list[str] = []
 
 # Segni zodiacali (indice 0 = Ariete) e loro elemento.
 SIGNS: list[str] = [
