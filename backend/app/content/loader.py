@@ -28,12 +28,15 @@ from dataclasses import dataclass, field
 from app import config
 
 _CARD_FIELD = re.compile(
-    r"^\*\*(?P<key>Titolo breve|Short title|Teaser)\*\*\s*\(card\)\s*:\s*(?P<value>.+)$"
+    r"^\*\*(?P<key>Titolo breve|Short title|Título breve|Teaser)\*\*"
+    r"\s*\(card\)\s*:\s*(?P<value>.+)$"
 )
 
 # Il marcatore del titolo card si scrive nella lingua del file: senza
-# questa equivalenza un file inglese perderebbe il titolo in silenzio.
-_CARD_TITLE_KEYS = {"Titolo breve", "Short title"}
+# questa equivalenza un file inglese o spagnolo perderebbe il titolo in
+# silenzio, senza che nulla fallisca. Aggiungendo una lingua va aggiunta
+# qui la sua traduzione. («Teaser» resta invariato nelle tre lingue.)
+_CARD_TITLE_KEYS = {"Titolo breve", "Short title", "Título breve"}
 
 
 @dataclass

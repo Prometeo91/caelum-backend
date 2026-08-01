@@ -32,6 +32,32 @@ def test_parse_markdown_extracts_fields():
     assert content.missing is False
 
 
+SAMPLE_ES = """# Título de prueba
+
+Primer párrafo.
+
+---
+
+**Título breve** (card): Título de la card
+
+**Teaser** (card): Un teaser de prueba.
+"""
+
+
+def test_parse_markdown_reads_spanish_card_markers():
+    """Il marcatore della card si scrive nella lingua del file.
+
+    Se «Título breve» non fosse riconosciuto il file non fallirebbe:
+    perderebbe il titolo della card in silenzio e la riga finirebbe nel
+    corpo del testo. È il motivo per cui questo test esiste.
+    """
+    content = loader.parse_markdown("x/y", "es", SAMPLE_ES)
+    assert content.card_title == "Título de la card"
+    assert content.teaser == "Un teaser de prueba."
+    assert "Título breve" not in content.body
+    assert "Primer párrafo" in content.body
+
+
 def test_missing_content_gives_placeholder():
     content = loader.load_content("elementi/non-esiste")
     assert content.missing is True
