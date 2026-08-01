@@ -89,6 +89,7 @@ class ContentOut(BaseModel):
     body: str = ""
     card_title: str | None = None
     teaser: str | None = None
+    paid: bool = False
 
 
 class ServiceInfoOut(BaseModel):

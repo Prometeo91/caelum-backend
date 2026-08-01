@@ -55,9 +55,35 @@ def content_slugs(data: dict) -> list[str]:
     return slugs
 
 
-# Primo lotto editoriale: i tre pilastri nei dodici segni (36 file).
+# Lotti editoriali già scritti: i tre pilastri nei dodici segni (36
+# file), poi Mercurio nei segni (12, primo lotto a pagamento). I
+# prossimi pianeti si aggiungono qui man mano che i testi esistono.
 REQUIRED_CONTENTS: list[str] = [
     f"tema-natale/{point}-in-{sign}"
-    for point in ("sole", "luna", "ascendente")
+    for point in ("sole", "luna", "ascendente", "mercurio")
     for sign in config.SIGNS
 ]
+
+# Pianeti le cui letture nel segno sono a pagamento (sblocco unico
+# in-app). Sole, Luna e Ascendente — i tre pilastri — restano gratuiti:
+# sono la prova della qualità che giustifica l'acquisto del resto.
+PAID_POINTS: frozenset[str] = frozenset(
+    body_id for body_id, _ in config.BODIES if body_id not in ("sole", "luna")
+)
+
+_PAID_SLUGS: frozenset[str] = frozenset(
+    f"tema-natale/{point}-in-{sign}"
+    for point in PAID_POINTS
+    for sign in config.SIGNS
+)
+
+
+def is_paid_slug(slug: str) -> bool:
+    """Vero per le letture pianeta-nel-segno da Mercurio a Plutone.
+
+    Il cancello sta nell'app (lo stato d'acquisto vive nello store, non
+    qui: il backend non ha account né riceve ricevute); questo flag dice
+    al client quali contenuti mostrare chiusi. Case e aspetti non sono
+    inclusi: quando avranno testi si deciderà lotto per lotto.
+    """
+    return slug in _PAID_SLUGS

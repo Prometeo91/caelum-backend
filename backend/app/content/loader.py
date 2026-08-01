@@ -45,6 +45,9 @@ class Content:
     body: str = ""  # Markdown, senza titolo né metadati card
     card_title: str | None = None
     teaser: str | None = None
+    # Impostato dalle rotte secondo il catalogo (ServiceDef.paid_contents):
+    # l'app mostra chiusi i contenuti a pagamento non acquistati.
+    paid: bool = False
 
 
 @dataclass

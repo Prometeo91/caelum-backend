@@ -138,6 +138,30 @@ def test_natal_chart_service_returns_chart_data():
     aspect_count = len(body["data"]["aspects"])
     # 10 segni + 10 case + 2 angoli + aspetti.
     assert len(slugs) == 22 + aspect_count
+    # A pagamento solo i pianeti nel segno da Mercurio a Plutone: otto
+    # contenuti, mai case, aspetti o i tre pilastri gratuiti.
+    paid = {c["slug"] for c in body["contents"] if c["paid"]}
+    assert len(paid) == 8
+    assert all("-in-" in slug and "-casa-" not in slug for slug in paid)
+    free_prefixes = (
+        "tema-natale/sole-in-",
+        "tema-natale/luna-in-",
+        "tema-natale/ascendente-in-",
+    )
+    assert not any(slug.startswith(free_prefixes) for slug in paid)
+
+
+def test_paid_slug_rule():
+    from app.services import natal_chart
+
+    assert natal_chart.is_paid_slug("tema-natale/mercurio-in-ariete")
+    assert natal_chart.is_paid_slug("tema-natale/plutone-in-pesci")
+    # Pilastri gratuiti, case e aspetti fuori dal pacchetto.
+    assert not natal_chart.is_paid_slug("tema-natale/sole-in-leone")
+    assert not natal_chart.is_paid_slug("tema-natale/luna-in-scorpione")
+    assert not natal_chart.is_paid_slug("tema-natale/ascendente-in-cancro")
+    assert not natal_chart.is_paid_slug("tema-natale/mercurio-in-casa-3")
+    assert not natal_chart.is_paid_slug("tema-natale/mercurio-trigono-plutone")
 
 
 @requires_ephemeris

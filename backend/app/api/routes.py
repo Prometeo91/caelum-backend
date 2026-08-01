@@ -121,6 +121,8 @@ def run_service(
         data = _chart_out(chart).model_dump()
 
     bundle = loader.load_bundle(service.content_slugs(data), lang=lang)
+    for item in bundle.items:
+        item.paid = service.paid_contents(item.slug)
     return schemas.ServiceResultOut(
         service=_service_info(service),
         data=data,

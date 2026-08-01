@@ -33,6 +33,10 @@ class ServiceDef:
     content_slugs: Callable[[dict], list[str]] = lambda data: []
     # Checklist di copertura per gli autori dei contenuti.
     required_contents: list[str] = field(default_factory=list)
+    # Slug -> il contenuto è a pagamento? Il flag arriva all'app, che
+    # mostra chiuso ciò che non è stato acquistato (lo sblocco è un
+    # acquisto in-app; lo stato vive nello store, non nel backend).
+    paid_contents: Callable[[str], bool] = lambda slug: False
 
 
 def _chart_passthrough(chart: Chart) -> dict:
@@ -50,6 +54,7 @@ CATALOG: list[ServiceDef] = [
         compute=_chart_passthrough,
         content_slugs=natal_chart.content_slugs,
         required_contents=natal_chart.REQUIRED_CONTENTS,
+        paid_contents=natal_chart.is_paid_slug,
     ),
     ServiceDef(
         id="elementi",
