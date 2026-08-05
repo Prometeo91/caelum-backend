@@ -30,13 +30,16 @@ def test_counts_by_house():
         "orientale": 2,  # case 1 e 10
         "occidentale": 2,  # case 7 e 4
     }
+    # I punti fittizi stanno a 0° (Ariete), quindi elemento fuoco.
     assert data["punti"]["sole"] == {
         "verticale": "inferiore",
         "orizzontale": "orientale",
+        "elemento": "fuoco",
     }
     assert data["punti"]["venere"] == {
         "verticale": "inferiore",
         "orizzontale": "occidentale",
+        "elemento": "fuoco",
     }
 
 

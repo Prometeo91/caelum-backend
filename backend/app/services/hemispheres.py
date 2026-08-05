@@ -44,7 +44,13 @@ def compute(chart: Chart) -> dict:
         horizontal = "orientale" if point.house in EASTERN_HOUSES else "occidentale"
         counts[vertical] += 1
         counts[horizontal] += 1
-        per_point[point.id] = {"verticale": vertical, "orizzontale": horizontal}
+        per_point[point.id] = {
+            "verticale": vertical,
+            "orizzontale": horizontal,
+            # L'elemento del segno in cui sta il corpo: la bussola
+            # dell'app colora i glifi con i colori degli elementi.
+            "elemento": point.element,
+        }
 
     return {
         "conteggi": counts,
