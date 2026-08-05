@@ -100,13 +100,47 @@ def test_aspects_sorted_by_orb(einstein):
 
 
 @requires_ephemeris
-def test_aspects_only_between_planets(einstein):
-    """Niente aspetti con le cuspidi delle case (Ascendente e Medio
-    Cielo compresi): si calcolano solo fra i corpi."""
-    cusps = {"ascendente", "medio_cielo"}
+def test_midheaven_has_no_aspects(einstein):
+    """Il Medio Cielo resta fuori dal calcolo degli aspetti."""
     for aspect in einstein.aspects:
-        assert aspect.point_a not in cusps
-        assert aspect.point_b not in cusps
+        assert "medio_cielo" not in (aspect.point_a, aspect.point_b)
+
+
+@requires_ephemeris
+def test_ascendant_only_conjunctions(einstein):
+    """L'Ascendente è una direzione, non un corpo: fa solo congiunzioni.
+
+    Senza la restrizione comparirebbero trigoni e quadrature che i
+    contenuti non prevedono, e per cui l'app mostrerebbe il segnaposto
+    «testo in preparazione» a ogni tema.
+    """
+    for aspect in einstein.aspects:
+        if "ascendente" in (aspect.point_a, aspect.point_b):
+            assert aspect.type == "congiunzione", (
+                f"{aspect.point_a}-{aspect.type}-{aspect.point_b}"
+            )
+
+
+def test_restricted_point_yields_no_other_aspect():
+    """Un pianeta in trigono esatto all'Ascendente non produce aspetti.
+
+    Non dipende da un tema reale: si costruiscono due punti a 120° e si
+    verifica che la restrizione li scarti.
+    """
+    asc = chart_mod.Point(
+        id="ascendente", longitude=0.0, sign="ariete", sign_index=0,
+        sign_degrees=0.0, element="fuoco",
+    )
+    marte = chart_mod.Point(
+        id="marte", longitude=120.0, sign="leone", sign_index=4,
+        sign_degrees=0.0, element="fuoco",
+    )
+    assert chart_mod._find_aspects([marte, asc]) == []
+
+    # Ma la congiunzione, sì.
+    marte.longitude = 2.0
+    conjunctions = chart_mod._find_aspects([marte, asc])
+    assert [a.type for a in conjunctions] == ["congiunzione"]
 
 
 @requires_ephemeris

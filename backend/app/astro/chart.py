@@ -129,8 +129,15 @@ def _find_aspects(points: list[Point]) -> list[Aspect]:
     for i in range(len(points)):
         for j in range(i + 1, len(points)):
             pa, pb = points[i], points[j]
+            # Un punto con restrizioni (oggi l'Ascendente, che fa solo
+            # congiunzioni) la impone all'intera coppia.
+            allowed = config.ASPECT_TYPES_ALLOWED.get(
+                pa.id
+            ) or config.ASPECT_TYPES_ALLOWED.get(pb.id)
             sep = angular_separation(pa.longitude, pb.longitude)
             for name, spec in config.ASPECTS.items():
+                if allowed is not None and name not in allowed:
+                    continue
                 orb = abs(sep - spec["angle"])
                 if orb <= spec["orb"]:
                     aspects.append(

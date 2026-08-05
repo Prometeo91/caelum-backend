@@ -73,9 +73,21 @@ ASPECTS: dict[str, dict[str, float]] = {
 }
 
 # Punti inclusi nel calcolo degli aspetti oltre ai corpi (id speciali).
-# Vuoto per scelta editoriale: gli aspetti si calcolano solo fra pianeti,
-# non con le cuspidi delle case (Ascendente e Medio Cielo compresi).
-ASPECT_EXTRA_POINTS: list[str] = []
+# Il Medio Cielo resta fuori; l'Ascendente entra, ma solo per le
+# congiunzioni (vedi ASPECT_TYPES_ALLOWED).
+ASPECT_EXTRA_POINTS: list[str] = ["ascendente"]
+
+# Aspetti ammessi per un punto specifico. Chi compare qui entra in gioco
+# soltanto con quei tipi; gli altri punti li fanno tutti.
+#
+# L'Ascendente non è un corpo ma una direzione, il grado che sorgeva a
+# est: per convenzione fa solo congiunzioni, cioè conta il pianeta che
+# gli sta addosso, non quello che lo guarda da lontano. Senza questa
+# restrizione comparirebbero trigoni e quadrature all'Ascendente, che i
+# contenuti non prevedono.
+ASPECT_TYPES_ALLOWED: dict[str, frozenset[str]] = {
+    "ascendente": frozenset({"congiunzione"}),
+}
 
 # Segni zodiacali (indice 0 = Ariete) e loro elemento.
 SIGNS: list[str] = [
