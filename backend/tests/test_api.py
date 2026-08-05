@@ -151,6 +151,22 @@ def test_natal_chart_service_returns_chart_data():
     assert not any(slug.startswith(free_prefixes) for slug in paid)
 
 
+@requires_ephemeris
+def test_now_returns_current_positions():
+    response = client.get("/api/now")
+    assert response.status_code == 200
+    body = response.json()
+    ids = [b["id"] for b in body["bodies"]]
+    assert ids[0] == "sole" and ids[-1] == "plutone" and len(ids) == 10
+    for point in body["bodies"]:
+        # Senza luogo niente case; segno e gradi ci sono sempre.
+        assert point["house"] is None
+        assert 0 <= point["sign_degrees"] < 30
+        assert point["degrees_label"]
+    # L'istante è UTC esplicito.
+    assert body["utc"].endswith("+00:00")
+
+
 def test_paid_slug_rule():
     from app.services import natal_chart
 

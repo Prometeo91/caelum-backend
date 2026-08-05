@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, HTTPException, Query
 
 from app import config
@@ -89,6 +91,24 @@ def _compute_chart(birth: schemas.BirthDataIn) -> chart_mod.Chart:
 @router.post("/api/chart", response_model=schemas.ChartOut)
 def compute_chart(birth: schemas.BirthDataIn):
     return _chart_out(_compute_chart(birth))
+
+
+@router.get("/api/now", response_model=schemas.NowOut)
+def current_sky():
+    """Il cielo adesso: posizioni dei corpi all'istante della richiesta.
+
+    Nessun dato personale in ingresso: le longitudini geocentriche non
+    dipendono dal luogo, quindi niente case né Ascendente.
+    """
+    utc = datetime.now(timezone.utc)
+    try:
+        points = chart_mod.compute_bodies(utc)
+    except EphemerisNotInstalled as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    return schemas.NowOut(
+        utc=utc.isoformat(),
+        bodies=[_point_out(p) for p in points],
+    )
 
 
 @router.get("/api/services", response_model=list[schemas.ServiceInfoOut])

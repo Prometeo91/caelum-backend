@@ -212,6 +212,26 @@ def compute_chart(
     return chart
 
 
+def compute_bodies(
+    utc: datetime, bodies: list[tuple[str, int]] | None = None
+) -> list[Point]:
+    """Posizioni dei corpi al solo istante UTC, senza luogo.
+
+    Serve al «cielo adesso»: le longitudini geocentriche non dipendono
+    dal punto di osservazione, quindi niente coordinate, niente case e
+    niente angoli (che invece le richiedono).
+    """
+    bodies = bodies if bodies is not None else config.BODIES
+    jd_ut = _julian_day_ut(utc)
+    points: list[Point] = []
+    with ephemeris_session() as swe:
+        flags = swe.FLG_SWIEPH | swe.FLG_SPEED
+        for body_id, swe_id in bodies:
+            values, _retflags = swe.calc_ut(jd_ut, swe_id, flags)
+            points.append(_make_point(body_id, values[0], speed=values[3]))
+    return points
+
+
 def format_degrees(sign_degrees: float) -> str:
     """23.5 -> \"23°30'\" (per tabelle e log)."""
     deg = int(sign_degrees)

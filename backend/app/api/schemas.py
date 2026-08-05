@@ -60,6 +60,13 @@ class PointOut(BaseModel):
     retrograde: bool | None = None
 
 
+class NowOut(BaseModel):
+    """Il cielo adesso: corpi all'istante corrente, senza case né angoli."""
+
+    utc: str
+    bodies: list[PointOut]
+
+
 class AspectOut(BaseModel):
     point_a: str
     point_b: str
