@@ -138,17 +138,11 @@ def test_natal_chart_service_returns_chart_data():
     aspect_count = len(body["data"]["aspects"])
     # 10 segni + 10 case + 2 angoli + aspetti.
     assert len(slugs) == 22 + aspect_count
-    # A pagamento solo i pianeti nel segno da Mercurio a Plutone: otto
-    # contenuti, mai case, aspetti o i tre pilastri gratuiti.
-    paid = {c["slug"] for c in body["contents"] if c["paid"]}
-    assert len(paid) == 8
-    assert all("-in-" in slug and "-casa-" not in slug for slug in paid)
-    free_prefixes = (
-        "tema-natale/sole-in-",
-        "tema-natale/luna-in-",
-        "tema-natale/ascendente-in-",
-    )
-    assert not any(slug.startswith(free_prefixes) for slug in paid)
+    # Tutto gratuito: i pianeti nei segni non sono più dietro lo
+    # sblocco (il pagamento riguarderà servizi complessi futuri).
+    # Se questo assert scatta, qualcuno ha rimesso un cancello senza
+    # decidere il modello: v. CLAUDE.md, «Contenuti a pagamento».
+    assert all(c["paid"] is False for c in body["contents"])
 
 
 @requires_ephemeris
@@ -167,17 +161,15 @@ def test_now_returns_current_positions():
     assert body["utc"].endswith("+00:00")
 
 
-def test_paid_slug_rule():
-    from app.services import natal_chart
+def test_no_service_marks_paid_contents():
+    # Nessun servizio del catalogo marca contenuti a pagamento: il
+    # campo paid_contents è infrastruttura in attesa dei servizi
+    # complessi futuri (sinastria, oroscopi periodici).
+    from app.services.catalog import CATALOG
 
-    assert natal_chart.is_paid_slug("tema-natale/mercurio-in-ariete")
-    assert natal_chart.is_paid_slug("tema-natale/plutone-in-pesci")
-    # Pilastri gratuiti, case e aspetti fuori dal pacchetto.
-    assert not natal_chart.is_paid_slug("tema-natale/sole-in-leone")
-    assert not natal_chart.is_paid_slug("tema-natale/luna-in-scorpione")
-    assert not natal_chart.is_paid_slug("tema-natale/ascendente-in-cancro")
-    assert not natal_chart.is_paid_slug("tema-natale/mercurio-in-casa-3")
-    assert not natal_chart.is_paid_slug("tema-natale/mercurio-trigono-plutone")
+    for service in CATALOG:
+        for slug in service.required_contents:
+            assert service.paid_contents(slug) is False, slug
 
 
 @requires_ephemeris

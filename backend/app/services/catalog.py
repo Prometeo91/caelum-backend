@@ -36,6 +36,8 @@ class ServiceDef:
     # Slug -> il contenuto è a pagamento? Il flag arriva all'app, che
     # mostra chiuso ciò che non è stato acquistato (lo sblocco è un
     # acquisto in-app; lo stato vive nello store, non nel backend).
+    # Oggi nessun servizio lo usa: è l'infrastruttura pronta per i
+    # servizi complessi futuri (sinastria, oroscopi periodici).
     paid_contents: Callable[[str], bool] = lambda slug: False
 
 
@@ -54,7 +56,6 @@ CATALOG: list[ServiceDef] = [
         compute=_chart_passthrough,
         content_slugs=natal_chart.content_slugs,
         required_contents=natal_chart.REQUIRED_CONTENTS,
-        paid_contents=natal_chart.is_paid_slug,
     ),
     ServiceDef(
         id="elementi",
