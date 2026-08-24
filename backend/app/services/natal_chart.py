@@ -3,7 +3,7 @@
 Il calcolo del tema vive nello strato API (il tema è esso stesso il dato
 del servizio); qui c'è solo la mappa dei contenuti da allegare per le
 pagine di lettura del redesign «Specola»: pianeti nei segni, pianeti
-nelle case, Ascendente e Medio Cielo nei segni, aspetti.
+nelle case, Ascendente nei segni, aspetti.
 
 I file Markdown si scrivono a lotti: il primo (Sole, Luna e Ascendente
 nei dodici segni — i «tre pilastri» del redesign) è in REQUIRED_CONTENTS
@@ -17,7 +17,6 @@ Schema degli slug (nomi file in italiano, come da contenuti/README.md):
     tema-natale/sole-in-ariete            pianeta nel segno
     tema-natale/sole-in-casa-7            pianeta nella casa
     tema-natale/ascendente-in-vergine     Ascendente nel segno
-    tema-natale/medio-cielo-in-gemelli    Medio Cielo nel segno
     tema-natale/sole-trigono-giove        aspetto (id in ordine di calcolo)
 """
 
@@ -40,12 +39,11 @@ def content_slugs(data: dict) -> list[str]:
             slugs.append(
                 f"tema-natale/{_slug_id(body['id'])}-in-casa-{body['house']}"
             )
-    for angle_key in ("ascendant", "midheaven"):
-        angle = data.get(angle_key)
-        if angle:
-            slugs.append(
-                f"tema-natale/{_slug_id(angle['id'])}-in-{angle['sign']}"
-            )
+    angle = data.get("ascendant")
+    if angle:
+        slugs.append(
+            f"tema-natale/{_slug_id(angle['id'])}-in-{angle['sign']}"
+        )
     for aspect in data.get("aspects", []):
         slugs.append(
             "tema-natale/"

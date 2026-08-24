@@ -133,11 +133,11 @@ def test_natal_chart_service_returns_chart_data():
     assert "tema-natale/sole-in-pesci" in slugs
     assert "tema-natale/sole-in-casa-10" in slugs
     assert "tema-natale/ascendente-in-cancro" in slugs
-    assert any(s.startswith("tema-natale/medio-cielo-in-") for s in slugs)
+    assert not any(s.startswith("tema-natale/medio-cielo-in-") for s in slugs)
     assert len(slugs) == len(set(slugs)), "slug duplicati"
     aspect_count = len(body["data"]["aspects"])
-    # 10 segni + 10 case + 2 angoli + aspetti.
-    assert len(slugs) == 22 + aspect_count
+    # 10 segni + 10 case + 1 angolo (Ascendente) + aspetti.
+    assert len(slugs) == 21 + aspect_count
     # Tutto gratuito: i pianeti nei segni non sono più dietro lo
     # sblocco (il pagamento riguarderà servizi complessi futuri).
     # Se questo assert scatta, qualcuno ha rimesso un cancello senza
