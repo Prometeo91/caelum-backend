@@ -56,8 +56,8 @@ def content_slugs(data: dict) -> list[str]:
 
 
 # Lotti editoriali già scritti: i tre pilastri nei dodici segni (36
-# file), poi Mercurio nei segni (12). I prossimi pianeti si aggiungono
-# qui man mano che i testi esistono.
+# file), poi tutti i pianeti da Mercurio a Plutone (84). I prossimi
+# lotti (case, aspetti) si aggiungono qui man mano che i testi esistono.
 #
 # Tutte le letture dei pianeti nei segni sono gratuite: l'idea di
 # metterle dietro lo sblocco unico è stata accantonata (l'eventuale
@@ -67,6 +67,18 @@ def content_slugs(data: dict) -> list[str]:
 # lucchetti, senza aggiornamenti lato client.
 REQUIRED_CONTENTS: list[str] = [
     f"tema-natale/{point}-in-{sign}"
-    for point in ("sole", "luna", "ascendente", "mercurio")
+    for point in (
+        "sole",
+        "luna",
+        "ascendente",
+        "mercurio",
+        "venere",
+        "marte",
+        "giove",
+        "saturno",
+        "urano",
+        "nettuno",
+        "plutone",
+    )
     for sign in config.SIGNS
 ]
