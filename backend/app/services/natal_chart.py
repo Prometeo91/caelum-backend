@@ -18,6 +18,11 @@ Schema degli slug (nomi file in italiano, come da contenuti/README.md):
     tema-natale/sole-in-casa-7            pianeta nella casa
     tema-natale/ascendente-in-vergine     Ascendente nel segno
     tema-natale/sole-trigono-giove        aspetto (id in ordine di calcolo)
+    pilastri/sole-ariete-ascendente-toro  il ritratto: Sole + Ascendente
+
+L'ultimo è il testo combinato della scheda «Ritratto» (144 combinazioni
+per lingua): vive nella cartella `pilastri/` ma viaggia nella risposta
+di questo servizio, così l'app lo riceve con la stessa chiamata del tema.
 """
 
 from __future__ import annotations
@@ -44,6 +49,13 @@ def content_slugs(data: dict) -> list[str]:
         slugs.append(
             f"tema-natale/{_slug_id(angle['id'])}-in-{angle['sign']}"
         )
+    # Il ritratto: la lettura combinata di Sole e Ascendente.
+    sun = next(
+        (body for body in data.get("bodies", []) if body.get("id") == "sole"),
+        None,
+    )
+    if sun and angle:
+        slugs.append(f"pilastri/sole-{sun['sign']}-ascendente-{angle['sign']}")
     for aspect in data.get("aspects", []):
         slugs.append(
             "tema-natale/"
@@ -79,4 +91,9 @@ REQUIRED_CONTENTS: list[str] = [
         "plutone",
     )
     for sign in config.SIGNS
+] + [
+    # Il ritratto: Sole × Ascendente, 144 combinazioni per lingua.
+    f"pilastri/sole-{sun}-ascendente-{asc}"
+    for sun in config.SIGNS
+    for asc in config.SIGNS
 ]
