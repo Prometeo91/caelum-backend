@@ -17,7 +17,7 @@ dependencies = [
     # tante versioni storiche compatibili. Queste sono le versioni
     # verificate insieme; per aggiornarle, farlo di proposito e
     # rieseguire i test.
-    "fastapi==0.140.13",
+    "fastapi==0.141.1",
     "uvicorn[standard]==0.51.0",
     "pyswisseph==2.10.3.2",
     "httpx==0.28.1",
