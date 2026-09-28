@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from app import config
 from app.content import loader
 from app.services import elements, hemispheres, natal_chart
@@ -114,3 +116,24 @@ def test_translated_contents_are_well_formed():
             assert content.card_title, f"titolo card mancante in {lang}/{slug}"
             assert content.teaser, f"teaser mancante in {lang}/{slug}"
             assert content.body.strip(), f"corpo vuoto in {lang}/{slug}"
+
+
+# Forme che danno un genere al lettore senza possibilità di equivoco
+# (v. contenuti/README.md, «Il lettore non ha genere»). Il controllo
+# copre solo queste: participi e aggettivi restano alla rilettura,
+# perché una regola più larga segnalerebbe anche «sei una persona».
+_READER_GENDER = {
+    "it": re.compile(r"\b(?:te|tu) stess[ao]\b", re.IGNORECASE),
+    "es": re.compile(r"\b(?:ti|tú) mism[ao]\b", re.IGNORECASE),
+}
+
+
+@requires_contents
+def test_contents_do_not_give_the_reader_a_gender():
+    offending = []
+    for lang, pattern in _READER_GENDER.items():
+        for path in sorted((config.CONTENT_DIR / lang).rglob("*.md")):
+            for match in pattern.finditer(path.read_text(encoding="utf-8")):
+                rel = path.relative_to(config.CONTENT_DIR)
+                offending.append(f"{rel}: {match.group()}")
+    assert not offending, "forme con genere del lettore:\n" + "\n".join(offending)
