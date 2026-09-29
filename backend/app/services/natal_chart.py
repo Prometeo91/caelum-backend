@@ -67,8 +67,8 @@ def content_slugs(data: dict) -> list[str]:
 
 # Lotti editoriali già scritti: i tre pilastri nei dodici segni (36
 # file), poi tutti i pianeti da Mercurio a Plutone (84). I prossimi
-# lotti (case, gli aspetti degli altri pianeti) si aggiungono qui man
-# mano che i testi esistono.
+# lotti (Medio Cielo, case, congiunzioni con l'Ascendente) si aggiungono
+# qui man mano che i testi esistono.
 #
 # Tutte le letture dei pianeti nei segni sono gratuite: l'idea di
 # metterle dietro lo sblocco unico è stata accantonata (l'eventuale
@@ -78,18 +78,18 @@ def content_slugs(data: dict) -> list[str]:
 # lucchetti, senza aggiornamenti lato client.
 # Aspetti che la geometria rende impossibili: Mercurio non si allontana
 # dal Sole più di 28° e Venere più di 48°, quindi con il Sole fanno solo
-# la congiunzione. Per queste coppie non si scrive il resto.
+# la congiunzione; fra loro due non superano i 76°, quindi niente oltre
+# il sestile. Per queste coppie non si scrive il resto.
 _POSSIBLE_ASPECTS: dict[tuple[str, str], tuple[str, ...]] = {
     ("sole", "mercurio"): ("congiunzione",),
     ("sole", "venere"): ("congiunzione",),
+    ("mercurio", "venere"): ("congiunzione", "sestile"),
 }
 
 _BODY_IDS = [body_id for body_id, _ in config.BODIES]
-_PAIRS_SOLE_LUNA = [
-    (a, b)
-    for i, a in enumerate(_BODY_IDS)
-    for b in _BODY_IDS[i + 1:]
-    if a in ("sole", "luna")
+# Tutte le coppie dei dieci corpi hanno i loro testi (45 coppie).
+_ASPECT_PAIRS = [
+    (a, b) for i, a in enumerate(_BODY_IDS) for b in _BODY_IDS[i + 1:]
 ]
 
 REQUIRED_CONTENTS: list[str] = [
@@ -114,9 +114,9 @@ REQUIRED_CONTENTS: list[str] = [
     for sun in config.SIGNS
     for asc in config.SIGNS
 ] + [
-    # Gli aspetti del Sole e della Luna, primo lotto degli aspetti.
-    # La coppia segue l'ordine di config.BODIES, come nel calcolo.
+    # Gli aspetti fra i dieci corpi. La coppia
+    # segue l'ordine di config.BODIES, come nel calcolo.
     f"tema-natale/{a}-{kind}-{b}"
-    for a, b in _PAIRS_SOLE_LUNA
+    for a, b in _ASPECT_PAIRS
     for kind in _POSSIBLE_ASPECTS.get((a, b), config.ASPECTS)
 ]
