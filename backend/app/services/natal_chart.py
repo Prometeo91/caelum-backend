@@ -67,7 +67,8 @@ def content_slugs(data: dict) -> list[str]:
 
 # Lotti editoriali già scritti: i tre pilastri nei dodici segni (36
 # file), poi tutti i pianeti da Mercurio a Plutone (84). I prossimi
-# lotti (case, aspetti) si aggiungono qui man mano che i testi esistono.
+# lotti (case, gli aspetti degli altri pianeti) si aggiungono qui man
+# mano che i testi esistono.
 #
 # Tutte le letture dei pianeti nei segni sono gratuite: l'idea di
 # metterle dietro lo sblocco unico è stata accantonata (l'eventuale
@@ -75,6 +76,22 @@ def content_slugs(data: dict) -> list[str]:
 # oroscopi periodici). L'infrastruttura resta pronta: basta passare
 # un predicato a `ServiceDef.paid_contents` e l'app rimette i
 # lucchetti, senza aggiornamenti lato client.
+# Aspetti che la geometria rende impossibili: Mercurio non si allontana
+# dal Sole più di 28° e Venere più di 48°, quindi con il Sole fanno solo
+# la congiunzione. Per queste coppie non si scrive il resto.
+_POSSIBLE_ASPECTS: dict[tuple[str, str], tuple[str, ...]] = {
+    ("sole", "mercurio"): ("congiunzione",),
+    ("sole", "venere"): ("congiunzione",),
+}
+
+_BODY_IDS = [body_id for body_id, _ in config.BODIES]
+_PAIRS_SOLE_LUNA = [
+    (a, b)
+    for i, a in enumerate(_BODY_IDS)
+    for b in _BODY_IDS[i + 1:]
+    if a in ("sole", "luna")
+]
+
 REQUIRED_CONTENTS: list[str] = [
     f"tema-natale/{point}-in-{sign}"
     for point in (
@@ -96,4 +113,10 @@ REQUIRED_CONTENTS: list[str] = [
     f"pilastri/sole-{sun}-ascendente-{asc}"
     for sun in config.SIGNS
     for asc in config.SIGNS
+] + [
+    # Gli aspetti del Sole e della Luna, primo lotto degli aspetti.
+    # La coppia segue l'ordine di config.BODIES, come nel calcolo.
+    f"tema-natale/{a}-{kind}-{b}"
+    for a, b in _PAIRS_SOLE_LUNA
+    for kind in _POSSIBLE_ASPECTS.get((a, b), config.ASPECTS)
 ]

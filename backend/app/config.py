@@ -73,9 +73,12 @@ ASPECTS: dict[str, dict[str, float]] = {
 }
 
 # Punti inclusi nel calcolo degli aspetti oltre ai corpi (id speciali).
-# Il Medio Cielo resta fuori; l'Ascendente entra, ma solo per le
-# congiunzioni (vedi ASPECT_TYPES_ALLOWED).
-ASPECT_EXTRA_POINTS: list[str] = ["ascendente"]
+# Il Medio Cielo resta fuori. L'Ascendente per ora anche: le sue dieci
+# congiunzioni non hanno ancora un testo (l'archivio da cui nascono gli
+# aspetti non le tratta), e l'app mostrerebbe «testo in preparazione».
+# Quando i testi esisteranno basta rimettere "ascendente" qui: la
+# restrizione alle sole congiunzioni (ASPECT_TYPES_ALLOWED) è pronta.
+ASPECT_EXTRA_POINTS: list[str] = []
 
 # Aspetti ammessi per un punto specifico. Chi compare qui entra in gioco
 # soltanto con quei tipi; gli altri punti li fanno tutti.
